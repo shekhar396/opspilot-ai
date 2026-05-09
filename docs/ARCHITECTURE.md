@@ -27,6 +27,7 @@ FastAPI Backend
 AI Analyzer
     ↓
 Telegram Alerts
+```
 
 # Future Architecture
 
