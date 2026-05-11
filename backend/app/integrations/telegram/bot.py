@@ -2,8 +2,9 @@ import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-from app.integrations.telegram.handlers import format_system_status
+from app.integrations.telegram.handlers import format_docker_status, format_system_status
 from app.services.system_metrics import get_system_metrics
+from app.services.docker_metrics import get_docker_metrics
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -18,7 +19,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/start - Start bot\n"
         "/help - Show help\n"
         "/health - Check bot health\n"
-        "/status - Check system status"
+        "/status - Check system status\n"
+        "/docker - Check Docker containers"
     )
 
 
@@ -29,6 +31,13 @@ async def health(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     metrics = get_system_metrics()
     message = format_system_status(metrics)
+
+    await update.message.reply_text(message)
+
+async def docker(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    containers = get_docker_metrics()
+
+    message = format_docker_status(containers)
 
     await update.message.reply_text(message)
 
@@ -45,6 +54,7 @@ def run_telegram_bot():
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("health", health))
     app.add_handler(CommandHandler("status", status))
+    app.add_handler(CommandHandler("docker", docker))
 
     print("Telegram bot is running...")
     app.run_polling()
