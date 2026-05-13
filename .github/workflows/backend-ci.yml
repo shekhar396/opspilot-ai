@@ -3,15 +3,23 @@ name: OpsPilot AI Backend CI
 on:
   push:
     branches:
-      - develop
       - main
-      - feature/**
-      - feat/**
+      - develop
+      - "feature/**"
+      - "feat/**"
+      - "ci/**"
   pull_request:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - name: Checkout Repository
@@ -20,19 +28,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          pip install -r requirements.txt
 
-      - name: Validate Imports
+      - name: Validate Python Syntax
         run: |
-          cd backend
           python -m compileall app
 
-      - name: Run Basic Health Check
+      - name: Validate FastAPI App Import
         run: |
-          cd backend
           python -c "from app.main import app; print('FastAPI app loaded successfully')"
