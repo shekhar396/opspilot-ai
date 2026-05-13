@@ -17,10 +17,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: backend
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -37,8 +33,10 @@ jobs:
 
       - name: Validate Python Syntax
         run: |
+          cd backend
           python -m compileall app
 
       - name: Validate FastAPI App Import
         run: |
+          cd backend
           python -c "from app.main import app; print('FastAPI app loaded successfully')"
