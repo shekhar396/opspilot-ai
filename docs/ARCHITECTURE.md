@@ -2,11 +2,20 @@
 
 ## Architecture Status
 
-Current architecture is designed for MVP-stage development with a clean path toward a scalable AI-assisted DevOps operations platform.
+OpsPilot AI is currently in MVP stage with:
+
+- Monitoring foundation completed
+- Alerting engine implemented
+- Telegram integration active
+- CI pipeline enabled
+
+The architecture is intentionally modular to support future AI-driven expansion.
+
+Current Release: v0.2.0
 
 ---
 
-## Current MVP Architecture
+# Current Production-Ready Architecture (MVP)
 
 ```text
 Telegram User
@@ -17,226 +26,246 @@ FastAPI Backend
       ↓
 Monitoring Services
       ↓
-Alerting Engine
+Alert Engine
       ↓
-AI Diagnosis Engine
+Background Worker
       ↓
-Telegram Response / Alert
+Telegram Notification
 ````
 
 ---
 
-## Core Components
+# Core Components
 
-### Telegram Bot
+## 1. Telegram Bot
 
 User interaction and notification layer.
 
 Responsibilities:
 
-* Receive commands
-* Send monitoring responses
-* Send alert notifications
-* Support future conversational DevOps queries
+* Receive user commands
+* Send system status responses
+* Deliver alerts
+* Support future conversational DevOps features
 
 ---
 
-### FastAPI Backend
+## 2. FastAPI Backend
 
-Main API and orchestration service.
+Main orchestration service.
 
 Responsibilities:
 
-* Expose monitoring APIs
-* Coordinate monitoring services
-* Process Telegram requests
-* Trigger alert checks
-* Connect with AI diagnosis layer
+* Expose REST APIs
+* Coordinate monitoring modules
+* Trigger alert evaluations
+* Manage system configuration
+* Provide health endpoints
+* Serve future AI integration layer
 
 ---
 
-### Monitoring Services
+## 3. Monitoring Services
 
-Collect operational data from the host system and Docker runtime.
+Collect operational metrics from host system and Docker runtime.
 
-Current responsibilities:
+Current Capabilities:
 
-* Linux CPU monitoring
-* RAM monitoring
-* Disk monitoring
+* CPU usage monitoring
+* RAM usage monitoring
+* Disk usage monitoring
 * Docker container status
-* Docker restart tracking
-* Docker health visibility
+* Container restart tracking
+* Container health detection
+
+Technology:
+
+* psutil
+* Docker SDK
 
 ---
 
-### Alerting Engine
+## 4. Alert Engine (Implemented in v0.2.0)
 
-Detects abnormal infrastructure conditions.
+Rule-based detection system.
 
-Planned responsibilities:
+Current Responsibilities:
 
 * CPU threshold alerts
 * RAM threshold alerts
 * Disk threshold alerts
-* Container down alerts
-* Restart spike alerts
-* Severity classification
+* Container stopped alerts
+* Container unhealthy alerts
+* Restart loop detection
+* Alert cooldown protection
+* Structured alert generation
+
+Alert Evaluation Frequency:
+
+* Periodic background loop (configurable interval)
 
 ---
 
-### AI Diagnosis Engine
+## 5. Background Worker
 
-Analyzes alerts, logs, and incidents using LLM APIs.
+Continuously runs alert evaluation.
 
-Planned responsibilities:
+Responsibilities:
 
-* Explain detected issues
-* Suggest possible root causes
-* Recommend safe troubleshooting commands
-* Generate incident summaries
-* Analyze logs
+* Periodic monitoring checks
+* Alert detection
+* Telegram alert delivery
+* Cooldown enforcement
+* Prevent duplicate spam alerts
+
+This is the operational core of v0.2.0.
 
 ---
 
-### Storage Layer
+## 6. Storage Layer
 
-Stores alert history and operational records.
-
-MVP:
+### Current (MVP)
 
 * SQLite
 
-Future:
-
-* PostgreSQL
-
-Planned data:
+Stores:
 
 * Alert history
+* Alert timestamps
 * Alert severity
-* Alert status
-* Monitoring events
-* AI diagnosis results
+* Monitoring records
+
+### Future
+
+* PostgreSQL (production migration)
 
 ---
 
-## Current Data Flow
+# Current Data Flow
 
 ```text
-Linux / Docker Host
-      ↓
+Linux Host / Docker Runtime
+        ↓
 Monitoring Services
-      ↓
-FastAPI Backend
-      ↓
-Alerting Engine
-      ↓
+        ↓
+Alert Engine
+        ↓
+Background Worker
+        ↓
 Telegram Bot
-      ↓
+        ↓
 DevOps Engineer
 ```
 
 ---
 
-## Future AI-Assisted Flow
+# Future AI-Assisted Flow
 
 ```text
-Alert / Log / Incident
-      ↓
+Alert / Incident / Log
+        ↓
 AI Diagnosis Engine
-      ↓
-Root Cause Suggestion
-      ↓
-Recommended Commands
-      ↓
+        ↓
+Root Cause Analysis
+        ↓
+Safe Recommendations
+        ↓
 Telegram Response
 ```
 
 ---
 
-## Future Architecture
+# Planned Scalable Architecture (Post-MVP)
 
-These features are planned after the MVP foundation is stable.
+## 1. Multi-Server Agent System
 
-### Multi-Agent System
-
-Dedicated monitoring agents deployed on multiple servers.
-
-Purpose:
-
-* Monitor multiple Linux servers
-* Register agents centrally
-* Send metrics to central backend
+* Lightweight monitoring agents
+* Installed on multiple servers
+* Centralized coordination
+* Scalable infrastructure monitoring
 
 ---
 
-### Event Queue
+## 2. Event Queue System
 
-Asynchronous event processing for alerts and monitoring tasks.
+For asynchronous processing.
 
 Possible technologies:
 
 * Redis Queue
 * RabbitMQ
-* Kafka for future scale
+* Kafka (future scale)
+
+Use cases:
+
+* Alert processing
+* AI analysis jobs
+* Background tasks
 
 ---
 
-### Redis Caching
+## 3. Redis Layer
 
-Temporary storage for:
+For:
 
-* Recent metrics
-* Alert cooldowns
-* AI response cache
-* Short-lived operational state
-
----
-
-### PostgreSQL Migration
-
-Transition from SQLite to PostgreSQL for production readiness.
-
-Purpose:
-
-* Better historical data storage
-* Better reporting
-* Multi-server support
-* Production-grade persistence
+* Alert cooldown tracking
+* Short-term caching
+* Rate limiting
+* AI response caching
 
 ---
 
-### Kubernetes Deployment
+## 4. PostgreSQL Migration
 
-Container orchestration for scalable deployment.
+Production database upgrade.
 
-Future goals:
+Benefits:
 
-* Helm charts
+* Reliable long-term storage
+* Multi-server scalability
+* Advanced querying
+* Reporting support
+
+---
+
+## 5. Kubernetes Deployment
+
+Future container orchestration.
+
+Goals:
+
 * Horizontal scaling
-* Multi-environment deployment
-* Production deployment strategy
+* Helm-based deployment
+* Multi-environment support
+* Production-grade deployment strategy
 
 ---
 
-### Cloud Integrations
+## 6. Cloud Integrations
 
-Planned integrations:
+Future integrations:
 
-* AWS CloudWatch
-* EC2 monitoring
-* Grafana
+* AWS monitoring
+* CloudWatch
 * Prometheus
+* Grafana dashboards
+* Infrastructure-level observability
 
 ---
 
-## Engineering Principles
+# Engineering Principles
 
 * MVP-first development
-* Keep current architecture simple
-* Avoid premature overengineering
-* Build stable monitoring before automation
-* Add AI features incrementally
-* Prefer safe recommendations before auto-remediation
+* Incremental complexity
+* Stable monitoring before automation
+* Safe recommendations before self-healing
+* Clean modular architecture
+* Scalable design without premature overengineering
+* AI features added progressively
+
+---
+
+# Architecture Evolution Path
+
+Monitoring → Alerting → Visibility → AI Diagnosis → AI Logs → CI/CD Awareness → Conversational DevOps → Intelligent Operations Platform
 

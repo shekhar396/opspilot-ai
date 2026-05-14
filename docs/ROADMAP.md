@@ -24,7 +24,7 @@ Priority order:
 2. Operational Visibility
 3. AI Diagnosis
 4. AI Log Analysis
-5. CI/CD Awareness
+5. CI/CD Visibility
 6. Conversational DevOps Assistant
 
 ---
@@ -50,11 +50,11 @@ Build a stable infrastructure monitoring foundation.
 - Clean service structure
 
 Release:
-v0.3.0
+v0.1.0
 
 ---
 
-# Phase 2 — Operational Visibility
+# Phase 2 — Operational Visibility ✅
 
 ## Goals
 Enable proactive operational monitoring and alerting.
@@ -65,8 +65,9 @@ Enable proactive operational monitoring and alerting.
 - Disk alerts
 - Container down alerts
 - Restart spike alerts
-- Alert severity levels
 - Telegram notifications
+- Alert cooldown protection
+- Background alert workers
 
 ## Additional Features
 - Alert history storage
@@ -74,11 +75,50 @@ Enable proactive operational monitoring and alerting.
 - Historical tracking
 
 Release:
+v0.2.0
+
+---
+
+# Phase 3 — Alert History & Monitoring Dashboard
+
+## Goals
+Provide operational visibility through historical monitoring and dashboards.
+
+## Features
+- Alert history storage
+- SQLite alert database
+- Alert filtering
+- Alert search
+- Alert severity classification
+- Monitoring dashboard
+- Recent alert timeline
+- Historical operational visibility
+
+Release:
+v0.3.0
+
+---
+
+# Phase 4 — CI/CD Visibility
+
+## Goals
+Introduce deployment and pipeline awareness.
+
+## Features
+- Jenkins monitoring
+- Failed build alerts
+- Deployment visibility
+- Build diagnostics
+- Pipeline summaries
+- Build duration tracking
+- Repeated failure detection
+
+Release:
 v0.4.0
 
 ---
 
-# Phase 3 — AI Diagnosis Layer
+# Phase 5 — AI Diagnosis Layer
 
 ## Goals
 Introduce AI-assisted operational diagnostics.
@@ -93,63 +133,54 @@ Introduce AI-assisted operational diagnostics.
 ## Example
 ```text
 Container restarting repeatedly due to memory exhaustion.
-```
+````
 
 Release:
 v0.5.0
 
 ---
 
-# Phase 4 — AI Log Analysis
+# Phase 6 — AI Log Analysis
 
 ## Goals
+
 Enable intelligent infrastructure log analysis.
 
 ## Features
-- Docker log analysis
-- Linux service log analysis
-- Error summarization
-- Suggested fixes
-- Incident reporting
+
+* Docker log analysis
+* Linux service log analysis
+* Jenkins build log analysis
+* Error summarization
+* Suggested fixes
+* Incident reporting
 
 Release:
 v0.6.0
 
 ---
 
-# Phase 5 — CI/CD Visibility
+# Phase 7 — Conversational AI Operations
 
 ## Goals
-Introduce deployment and pipeline awareness.
 
-## Features
-- Jenkins monitoring
-- Failed build alerts
-- Deployment visibility
-- Build diagnostics
-- Pipeline summaries
-
-Release:
-v0.7.0
-
----
-
-# Phase 6 — Conversational AI Operations
-
-## Goals
 Enable Hermes-style DevOps assistant behavior.
 
 ## Features
-- Natural language troubleshooting
-- Conversational operations
-- Infrastructure-aware responses
-- AI operational assistant
+
+* Natural language troubleshooting
+* Conversational operations
+* Infrastructure-aware responses
+* AI operational assistant
+* AI-assisted deployment workflows
 
 ## Example Queries
+
 ```text
 Why is nginx down?
 Show unhealthy containers
 Why did deployment fail?
+Restart failed deployment safely
 ```
 
 Release:
@@ -162,22 +193,26 @@ v1.0.0
 These are intentionally postponed to avoid MVP scope explosion.
 
 ## Future Features
-- Kubernetes monitoring
-- AWS integrations
-- Terraform awareness
-- Prometheus integration
-- Grafana integration
-- Multi-server agents
-- Predictive analytics
-- Autonomous remediation
-- Self-healing infrastructure
+
+* Kubernetes monitoring
+* AWS integrations
+* Terraform awareness
+* Prometheus integration
+* Grafana integration
+* Multi-server agents
+* Predictive analytics
+* Autonomous remediation
+* Self-healing infrastructure
+* AI-powered deployment agents
 
 ---
 
 # Long-Term Vision
 
 OpsPilot AI aims to evolve into:
-- AI-assisted operations platform
-- Infrastructure intelligence engine
-- AIOps platform
-- Conversational DevOps copilot
+
+* AI-assisted operations platform
+* Infrastructure intelligence engine
+* AIOps platform
+* Conversational DevOps copilot
+* Autonomous DevOps operations system
