@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.alerts import router as alerts_router
 from app.api.health import router as health_router
 from app.api.metrics import router as metrics_router
 from app.api import docker_metrics
@@ -22,6 +23,7 @@ app = FastAPI(
 app.include_router(health_router)
 app.include_router(metrics_router)
 app.include_router(docker_metrics.router)
+app.include_router(alerts_router)
 
 
 @app.get("/")
