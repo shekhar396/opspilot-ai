@@ -14,3 +14,12 @@ class AlertResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AlertSummaryResponse(BaseModel):
+    total_alerts: int
+    warning_alerts: int
+    critical_alerts: int
+    system_alerts: int
+    docker_alerts: int
+    latest_alert_time: datetime | None
