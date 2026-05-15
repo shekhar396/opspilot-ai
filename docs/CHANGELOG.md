@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.3.0 - Alert History and Alert APIs
+
+### Added
+
+- SQLite integration for MVP alert storage
+- Persistent alert history
+- Alert history APIs
+- Severity and source filtering support
+- Alert summary endpoint
+- Cooldown protection for repeated alerts
+
+---
+
 ## v0.2.0 - Alerting Engine
 
 ### Added

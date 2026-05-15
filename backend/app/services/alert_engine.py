@@ -9,7 +9,15 @@ from app.config.alert_config import (
 last_alert_sent = {}
 
 
-def should_send_alert(alert_key: str) -> bool:
+def build_alert_key(host: str, issue: str, source: str) -> str:
+    # Cooldown identity must match the alert fields we persist and notify on.
+    return f"{host}:{issue}:{source}".lower()
+
+
+def should_send_alert(host: str, issue: str, source: str) -> bool:
+    # Alerts are suppressed before they are returned to the runner, which prevents
+    # both duplicate DB inserts and duplicate Telegram notifications.
+    alert_key = build_alert_key(host, issue, source)
     now = datetime.now()
 
     if alert_key not in last_alert_sent:
@@ -25,10 +33,18 @@ def should_send_alert(alert_key: str) -> bool:
     return False
 
 
-def create_alert(host: str, issue: str, details: dict) -> dict:
+def create_alert(
+    host: str,
+    issue: str,
+    details: dict,
+    severity: str = "warning",
+    source: str = "system",
+) -> dict:
     return {
         "host": host,
         "issue": issue,
+        "severity": severity,
+        "source": source,
         "details": details,
         "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
@@ -44,12 +60,12 @@ def evaluate_system_alerts(metrics: dict) -> list[dict]:
     disk_percent = metrics.get("disk", {}).get("percent", 0)
 
     if cpu_percent > CPU_THRESHOLD:
-        alert_key = f"{host}:cpu"
-        if should_send_alert(alert_key):
+        issue = "High CPU Usage"
+        if should_send_alert(host, issue, "system"):
             alerts.append(
                 create_alert(
                     host,
-                    "High CPU Usage",
+                    issue,
                     {
                         "cpu": cpu_percent,
                         "threshold": CPU_THRESHOLD,
@@ -58,12 +74,12 @@ def evaluate_system_alerts(metrics: dict) -> list[dict]:
             )
 
     if memory_percent > RAM_THRESHOLD:
-        alert_key = f"{host}:ram"
-        if should_send_alert(alert_key):
+        issue = "High RAM Usage"
+        if should_send_alert(host, issue, "system"):
             alerts.append(
                 create_alert(
                     host,
-                    "High RAM Usage",
+                    issue,
                     {
                         "ram": memory_percent,
                         "threshold": RAM_THRESHOLD,
@@ -72,12 +88,12 @@ def evaluate_system_alerts(metrics: dict) -> list[dict]:
             )
 
     if disk_percent > DISK_THRESHOLD:
-        alert_key = f"{host}:disk"
-        if should_send_alert(alert_key):
+        issue = "High Disk Usage"
+        if should_send_alert(host, issue, "system"):
             alerts.append(
                 create_alert(
                     host,
-                    "High Disk Usage",
+                    issue,
                     {
                         "disk": disk_percent,
                         "threshold": DISK_THRESHOLD,
@@ -97,30 +113,32 @@ def evaluate_docker_alerts(containers: list[dict], host: str = "local-docker") -
         health = container.get("health", "").lower()
 
         if status in ["exited", "dead"]:
-            alert_key = f"{host}:docker:{name}:stopped"
-            if should_send_alert(alert_key):
+            issue = "Docker Container Stopped"
+            if should_send_alert(host, issue, "docker"):
                 alerts.append(
                     create_alert(
                         host,
-                        "Docker Container Stopped",
+                        issue,
                         {
                             "container": name,
                             "status": status,
                         },
+                        source="docker",
                     )
                 )
 
         if health == "unhealthy":
-            alert_key = f"{host}:docker:{name}:unhealthy"
-            if should_send_alert(alert_key):
+            issue = "Docker Container Unhealthy"
+            if should_send_alert(host, issue, "docker"):
                 alerts.append(
                     create_alert(
                         host,
-                        "Docker Container Unhealthy",
+                        issue,
                         {
                             "container": name,
                             "health": health,
                         },
+                        source="docker",
                     )
                 )
 
