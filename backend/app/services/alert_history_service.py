@@ -39,6 +39,22 @@ def get_alert_by_id(db: Session, alert_id: int) -> AlertHistory | None:
     return db.query(AlertHistory).filter(AlertHistory.id == alert_id).first()
 
 
+def has_jenkins_build_alert(
+    db: Session,
+    job_name: str,
+    build_number: int,
+) -> bool:
+    return (
+        db.query(AlertHistory)
+        .filter(AlertHistory.source == "jenkins")
+        .filter(AlertHistory.issue == "Jenkins Build Failed")
+        .filter(AlertHistory.host == job_name)
+        .filter(AlertHistory.details["build_number"].as_integer() == build_number)
+        .first()
+        is not None
+    )
+
+
 def get_all_alerts(db: Session, limit: int = 100) -> list[AlertHistory]:
     return (
         db.query(AlertHistory)
