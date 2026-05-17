@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.4.0 - Jenkins Monitoring
+
+### Added
+
+- Jenkins API integration
+- Jenkins monitoring APIs
+- Jenkins failed build monitoring
+- Jenkins summary endpoint
+- Telegram alerts for failed Jenkins builds
+- SQLite-backed Jenkins alert persistence
+- Restart-safe Jenkins failed-build deduplication
+- Graceful alert worker shutdown
+
+---
+
 ## v0.3.0 - Alert History and Alert APIs
 
 ### Added

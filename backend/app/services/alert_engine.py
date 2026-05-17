@@ -7,6 +7,7 @@ from app.config.alert_config import (
 )
 
 last_alert_sent = {}
+jenkins_build_alerts_sent = set()
 
 
 def build_alert_key(host: str, issue: str, source: str) -> str:
@@ -31,6 +32,20 @@ def should_send_alert(host: str, issue: str, source: str) -> bool:
         return True
 
     return False
+
+
+def should_send_jenkins_alert(
+    job_name: str,
+    issue: str,
+    build_number: int | None,
+) -> bool:
+    alert_key = f"{job_name}:{issue}:jenkins:{build_number}".lower()
+
+    if alert_key in jenkins_build_alerts_sent:
+        return False
+
+    jenkins_build_alerts_sent.add(alert_key)
+    return True
 
 
 def create_alert(
@@ -141,5 +156,33 @@ def evaluate_docker_alerts(containers: list[dict], host: str = "local-docker") -
                         source="docker",
                     )
                 )
+
+    return alerts
+
+
+def evaluate_jenkins_alerts(jenkins_failed_jobs: list[dict]) -> list[dict]:
+    alerts = []
+    issue = "Jenkins Build Failed"
+
+    for job in jenkins_failed_jobs:
+        job_name = job.get("name", "unknown-job")
+        build_number = job.get("last_build_number")
+
+        if should_send_jenkins_alert(job_name, issue, build_number):
+            alerts.append(
+                create_alert(
+                    job_name,
+                    issue,
+                    {
+                        "job_name": job_name,
+                        "build_number": build_number,
+                        "build_url": job.get("build_url"),
+                        "result": job.get("build_status"),
+                        "duration": job.get("duration"),
+                    },
+                    severity="critical",
+                    source="jenkins",
+                )
+            )
 
     return alerts
