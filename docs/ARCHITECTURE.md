@@ -4,32 +4,34 @@
 
 OpsPilot AI is in active MVP development with:
 
-- Linux and Docker monitoring
+- Linux, Docker, and Jenkins monitoring
 - Rule-based alerting
 - SQLite alert persistence
 - Alert history APIs
 - Telegram notifications
 - GitHub Actions CI
 
-Current Release: v0.3.0
+Current Release: v0.4.0
 
 ---
 
 # Current Architecture
 
 ```text
-Metrics
-   ↓
-Alert Engine
-   ↓
+Linux Monitoring
+Docker Monitoring
+Jenkins Monitoring
+       ↓
+  Alert Engine
+       ↓
 SQLite Alert Storage
-   ↓
-Alert APIs
-   ↓
+       ↓
+   Alert APIs
+       ↓
 Telegram Notification
 ```
 
-Cooldown protection runs during alert evaluation to reduce duplicate notifications while preserving persistent alert history for review.
+Runtime cooldown protection reduces repeated notifications while persistent alert history enables restart-safe deduplication for Jenkins failed-build alerts.
 
 ---
 
@@ -37,26 +39,45 @@ Cooldown protection runs during alert evaluation to reduce duplicate notificatio
 
 ## 1. Monitoring Services
 
-Collect operational metrics from the host system and Docker runtime.
+Collect operational signals from Linux hosts, Docker runtimes, and Jenkins CI/CD pipelines.
 
 Current Capabilities:
 
 - CPU, RAM, and disk monitoring
 - Host and platform visibility
-- Docker container status
-- Container restart tracking
-- Container health detection
+- Docker container status and health detection
+- Jenkins API integration
+- Jenkins job and build status visibility
+- Failed Jenkins build detection
 
 Technology:
 
 - psutil
 - Docker SDK
+- Jenkins API
 
 ---
 
-## 2. Alert Engine
+## 2. Jenkins Monitoring
 
-Rule-based detection layer for infrastructure and container issues.
+Jenkins monitoring adds CI/CD observability to OpsPilot AI.
+
+Responsibilities:
+
+- Check Jenkins connectivity
+- List Jenkins jobs
+- Read build details from Jenkins job APIs
+- Detect failed builds
+- Expose Jenkins summary metrics
+- Feed failed build events into the alert engine
+
+Failed build alerts include job name, build number, build URL, result, and duration.
+
+---
+
+## 3. Alert Engine
+
+Rule-based detection layer for infrastructure, container, and Jenkins issues.
 
 Current Responsibilities:
 
@@ -65,14 +86,14 @@ Current Responsibilities:
 - Disk threshold alerts
 - Container stopped alerts
 - Container unhealthy alerts
-- Restart loop detection
+- Jenkins failed build alerts
 - Severity classification
-- Cooldown protection
+- Runtime cooldown protection
 - Structured alert generation
 
 ---
 
-## 3. SQLite Alert Storage
+## 4. SQLite Alert Storage
 
 Persistent alert history layer backed by SQLite and SQLAlchemy.
 
@@ -84,13 +105,13 @@ Stores:
 - Alert details
 - Alert timestamp
 
-This creates persistent monitoring visibility across worker runs without changing the lightweight MVP footprint.
+This supports operational review, alert APIs, and restart-safe Jenkins duplicate alert protection.
 
 ---
 
-## 4. Alert APIs
+## 5. Alert APIs
 
-FastAPI endpoints expose alert history for operational review.
+FastAPI endpoints expose alert history and monitoring status for operational review.
 
 Current Capabilities:
 
@@ -100,10 +121,11 @@ Current Capabilities:
 - Filter by severity and source
 - Limit result size
 - Return alert summary counts
+- Expose Jenkins health, jobs, failures, and summary data
 
 ---
 
-## 5. Background Worker
+## 6. Background Worker
 
 Runs continuous monitoring and alert evaluation.
 
@@ -113,11 +135,13 @@ Responsibilities:
 - Alert detection
 - Cooldown enforcement
 - Alert persistence
+- Restart-safe Jenkins deduplication
 - Telegram alert delivery
+- Graceful shutdown on user interrupt
 
 ---
 
-## 6. Telegram Notification
+## 7. Telegram Notification
 
 Operational notification layer for real-time alert delivery.
 
@@ -125,6 +149,7 @@ Responsibilities:
 
 - Send infrastructure alerts
 - Send Docker alerts
+- Send Jenkins failed build alerts
 - Support monitoring commands
 - Provide future conversational DevOps access
 
@@ -133,18 +158,18 @@ Responsibilities:
 # Data Flow
 
 ```text
-Linux Host / Docker Runtime
-        ↓
-Monitoring Services
-        ↓
-Alert Engine
-        ↓
+Linux Monitoring
+Docker Monitoring
+Jenkins Monitoring
+       ↓
+  Alert Engine
+       ↓
 SQLite Alert Storage
-        ↓
-Alert APIs
-        ↓
+       ↓
+   Alert APIs
+       ↓
 Telegram Notification
-        ↓
+       ↓
 DevOps Engineer
 ```
 
@@ -153,7 +178,7 @@ DevOps Engineer
 # Future AI-Assisted Flow
 
 ```text
-Alert / Incident / Log
+Alert / Incident / Log / Failed Build
         ↓
 AI Diagnosis Engine
         ↓
@@ -202,6 +227,7 @@ Future integrations include Kubernetes, AWS monitoring, Prometheus, Grafana, and
 - Persistent monitoring before automation
 - Stable alerting before AI diagnosis
 - Cooldown protection for alert quality
+- Restart-safe deduplication for repeated CI/CD failures
 - Clean modular architecture
 - Scalable design without premature overengineering
 
@@ -209,4 +235,4 @@ Future integrations include Kubernetes, AWS monitoring, Prometheus, Grafana, and
 
 # Architecture Evolution Path
 
-Monitoring -> Alerting -> Persistence -> Visibility -> AI Diagnosis -> AI Logs -> CI/CD Awareness -> Conversational DevOps -> Intelligent Operations Platform
+Monitoring -> Alerting -> Persistence -> CI/CD Observability -> Visibility -> AI Diagnosis -> AI Logs -> Conversational DevOps -> Intelligent Operations Platform

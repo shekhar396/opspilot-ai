@@ -6,111 +6,100 @@ All notable changes to this project are documented in this file.
 
 # Current Stable Release
 
-# v0.3.0 - Alert History and Operational Visibility
-Release Date: 2026-05-15
+# v0.4.0 - Jenkins Monitoring and CI/CD Observability
+Release Date: 2026-05-18
 
-OpsPilot AI v0.3.0 is a major MVP milestone. The project now persists alerts in SQLite, exposes alert history through FastAPI endpoints, and provides summary data for operational visibility. This moves OpsPilot AI from real-time monitoring toward a persistent monitoring platform.
+OpsPilot AI v0.4.0 adds Jenkins monitoring to the MVP platform. This release extends OpsPilot AI beyond Linux and Docker visibility into CI/CD pipeline health, enabling failed build detection, Jenkins APIs, Telegram notifications, and SQLite-backed alert persistence.
+
+The milestone strengthens the production-style monitoring workflow: collect signals, evaluate alerts, persist history, avoid duplicate notifications, and notify operators in Telegram.
 
 ---
 
 ## Key Features
 
-### Alert Persistence
+### Jenkins Monitoring
 
-- SQLite-backed alert history
-- SQLAlchemy ORM integration
-- Stored alert severity, source, details, and timestamps
-- Persistent monitoring history across worker runs
+- Jenkins API integration
+- Jenkins connection health checks
+- Jenkins job listing
+- Jenkins build detail inspection
+- Failed build monitoring
+- Jenkins summary metrics
 
-### Alert APIs
+### Jenkins Alerting
 
-- List persisted alerts
-- Retrieve recent alerts
-- Retrieve alert details by ID
-- Filter alerts by severity
-- Filter alerts by source
-- Limit alert result size
-- Retrieve alert summary counts
+- Critical alerts for failed Jenkins builds
+- Telegram notifications through the existing alert flow
+- Alert details include job name, build number, build URL, result, and duration
+- Runtime cooldown protection for alert noise reduction
+- Restart-safe duplicate protection backed by SQLite alert history
 
-### Cooldown Protection
+### CI/CD Observability
 
-- Repeated alerts are suppressed during cooldown windows
-- Alert noise is reduced before Telegram delivery
-- Monitoring remains suitable for continuous background execution
+v0.4.0 brings CI/CD failures into the same operational loop as infrastructure and Docker alerts. Failed builds are now visible through APIs, persisted in alert history, and delivered through Telegram.
 
 ---
 
 ## API Endpoints
 
-| Endpoint             | Description                  |
-| -------------------- | ---------------------------- |
-| GET /alerts/         | List persisted alerts        |
-| GET /alerts/recent   | List recent alerts           |
-| GET /alerts/summary  | Return alert summary metrics |
-| GET /alerts/{id}     | Return a single alert        |
-
-Examples:
-
-```text
-GET /alerts/?severity=warning
-GET /alerts/?source=docker
-GET /alerts/?severity=warning&source=system&limit=20
-GET /alerts/summary
-```
+| Endpoint                     | Description                |
+| ---------------------------- | -------------------------- |
+| GET /jenkins/health          | Jenkins connection health  |
+| GET /jenkins/jobs            | List Jenkins jobs          |
+| GET /jenkins/jobs/{job_name} | Get Jenkins job build data |
+| GET /jenkins/failed          | List failed Jenkins builds |
+| GET /jenkins/summary         | Jenkins build summary      |
 
 ---
 
 ## Architecture Improvements
 
-v0.3.0 introduces the persistent alert visibility path:
+v0.4.0 evolves the monitoring architecture into a broader operational pipeline:
 
 ```text
-Metrics
-   ↓
-Alert Engine
-   ↓
+Linux Monitoring
+Docker Monitoring
+Jenkins Monitoring
+       ↓
+  Alert Engine
+       ↓
 SQLite Alert Storage
-   ↓
-Alert APIs
-   ↓
+       ↓
+   Alert APIs
+       ↓
 Telegram Notification
 ```
 
-This architecture keeps the MVP lightweight while creating a foundation for dashboards, AI diagnosis, incident summaries, and future multi-server monitoring.
+This keeps the MVP simple while establishing the foundation for AI-assisted build failure diagnosis, incident summaries, and future CI/CD troubleshooting recommendations.
 
 ---
 
 ## Monitoring Platform Evolution
 
-OpsPilot AI is evolving from a command-based monitoring assistant into a persistent operations platform. With stored alerts and queryable APIs, the system can now support:
-
-- Alert history review
-- Operational trend analysis
-- Future dashboard views
-- AI-assisted incident diagnosis
-- Long-term monitoring workflows
+OpsPilot AI now monitors infrastructure, containers, and CI/CD build outcomes in one alerting workflow. The system is better positioned for production-style operations because it can persist alert history, suppress noisy duplicates, survive worker restarts, and expose monitoring state through APIs.
 
 ---
 
 # Previous Releases
 
-## v0.3.0 - Infrastructure Monitoring Foundation
-Release Date: 2026-05-11
+## v0.3.0 - Alert History and Operational Visibility
+Release Date: 2026-05-15
 
-- Linux system monitoring
-- Docker container monitoring
-- Telegram monitoring commands
-- FastAPI service structure
-- Modular monitoring services
+- SQLite-backed alert history
+- Alert history APIs
+- Severity and source filtering
+- Alert summary endpoint
+- Cooldown protection for repeated alerts
 
-## v0.2.0 - Linux System Monitoring
+## v0.2.0 - Alerting Engine
 Release Date: 2026-05-10
 
-- CPU monitoring
-- RAM monitoring
-- Disk monitoring
-- Host information collection
-- `/status` Telegram command
+- Rule-based alert engine
+- CPU/RAM/Disk threshold monitoring
+- Docker alert support
+- Telegram alert delivery
+- Background alert worker
+- GitHub Actions CI pipeline
 
 ## v0.1.0 - Initial Project Foundation
 Release Date: 2026-05-09
@@ -126,7 +115,7 @@ Release Date: 2026-05-09
 # Upcoming Focus
 
 - Monitoring dashboard
-- Jenkins monitoring
+- AI Jenkins build diagnosis
 - AI alert diagnosis
 - AI log analysis
 - Conversational DevOps assistant
